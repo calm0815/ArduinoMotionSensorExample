@@ -37,6 +37,7 @@
  * min(int a, int b)
  */
 
+#define MPU9250
 #define i2c_write   !I2Cdev::writeBytes
 #define i2c_read    !I2Cdev::readBytes
 #define delay_ms    delay

@@ -14,7 +14,8 @@ struct s_mympu mympu;
 
 struct s_quat { float w, x, y, z; }; 
 
-union u_quat {
+union u_quat 
+{
 	struct s_quat _f;
 	long _l[4];
 } q;
@@ -24,7 +25,8 @@ static short gyro[3];
 static short sensors;
 static unsigned char fifoCount;
 
-int mympu_open(unsigned int rate) {
+int mympu_open(unsigned int rate) 
+{
   	mpu_select_device(0);
    	mpu_init_structures();
 
@@ -120,11 +122,13 @@ static void quaternionToEuler( const struct s_quat *q, float* x, float* y, float
         }
 }
 
-static inline float wrap_180(float x) {
+static inline float wrap_180(float x) 
+{
 	return (x<-180.f?x+360.f:(x>180.f?x-180.f:x));
 }
 
-int mympu_update() {
+int mympu_update() 
+{
 
 	do {
 		ret = dmp_read_fifo(gyro,NULL,q._l,NULL,&sensors,&fifoCount);
@@ -162,3 +166,26 @@ int mympu_update() {
 	return 0;
 }
 
+void mympu_rpycalib()
+{
+	
+	float rbias = 0;
+  float pbias = 0;
+  float ybias = 0;
+
+	for(int i=1; i <= 1000; i++)
+	{
+
+		int ret = mympu_update();
+
+		rbias = ((i-1) * rbias + mympu.ypr[0]) / i;
+		pbias = ((i-1) * pbias + mympu.ypr[1]) / i;
+		ybias = ((i-1) * ybias + mympu.ypr[2]) / i;
+		
+	}
+
+  mympu.bias[0] = rbias;
+  mympu.bias[1] = pbias;
+  mympu.bias[2] = ybias;
+
+}

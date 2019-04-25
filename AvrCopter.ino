@@ -10,7 +10,8 @@ void setup()
     ret = mympu_open(200);
     Serial.print("MPU init: "); Serial.println(ret);
     Serial.print("Free mem: "); Serial.println(freeRam());
-	
+
+    mympu_rpycalib();
 }
 
 unsigned int c = 0; //cumulative number of successful MPU/DMP reads
@@ -37,12 +38,11 @@ void loop()
     if (!(c%25)) 
 	{
 	    Serial.print(np); Serial.print("  "); Serial.print(err_c); Serial.print(" "); Serial.print(err_o);
-	    Serial.print(" Y: "); Serial.print(mympu.ypr[0]);
-	    Serial.print(" P: "); Serial.print(mympu.ypr[1]);
-	    Serial.print(" R: "); Serial.print(mympu.ypr[2]);
+	    Serial.print(" Y: "); Serial.print(mympu.ypr[0] - mympu.bias[0]);
+	    Serial.print(" P: "); Serial.print(mympu.ypr[1] - mympu.bias[1]);
+	    Serial.print(" R: "); Serial.print(mympu.ypr[2] - mympu.bias[2]);
 	    Serial.print("\tgy: "); Serial.print(mympu.gyro[0]);
 	    Serial.print(" gp: "); Serial.print(mympu.gyro[1]);
 	    Serial.print(" gr: "); Serial.println(mympu.gyro[2]);
     }
 }
-
